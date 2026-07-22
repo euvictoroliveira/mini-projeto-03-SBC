@@ -194,7 +194,6 @@ print("\n8. SPARQL UPDATE (DELETE/INSERT): Elderbug movido para Greenpath.")
 # 9. SELECT (Agregação): Contar o total de bosses
 q8 = """
 PREFIX hk: <http://example.org/hollowknight#>
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 SELECT (COUNT(?boss) AS ?totalBosses) WHERE {
     ?boss rdf:type hk:Boss .
 }
