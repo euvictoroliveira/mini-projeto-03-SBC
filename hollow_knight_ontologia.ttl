@@ -1,0 +1,337 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix hk: <http://example.org/hollowknight#> .
+
+hk:HollowKnightOntology a owl:Ontology ;
+    rdfs:label "Ontologia de Hollow Knight"  ;
+    rdfs:comment "Ontologia expandida sobre o universo do jogo Hollow Knight (Team Cherry), cobrindo personagens, localidades, itens e suas relações, incluindo comércio com NPCs vendedores." .
+
+# ==========================================
+# 1. CLASSES E HIERARQUIA
+# ==========================================
+hk:Entidade a owl:Class ; rdfs:label "Entidade" .
+
+hk:Personagem a owl:Class ; rdfs:subClassOf hk:Entidade ; rdfs:label "Personagem" .
+hk:Localidade a owl:Class ; rdfs:subClassOf hk:Entidade ; rdfs:label "Localidade" .
+hk:Item a owl:Class ; rdfs:subClassOf hk:Entidade ; rdfs:label "Item" .
+
+hk:Boss a owl:Class ; rdfs:subClassOf hk:Personagem ; rdfs:label "Chefe" .
+hk:NPC a owl:Class ; rdfs:subClassOf hk:Personagem ; rdfs:label "NPC" .
+hk:InimigoComum a owl:Class ; rdfs:subClassOf hk:Personagem ; rdfs:label "Inimigo Comum" .
+hk:Vendedor a owl:Class ; rdfs:subClassOf hk:NPC ; rdfs:label "Vendedor" ;
+    rdfs:comment "NPC que possui pelo menos um item à venda via hk:vende." .
+
+hk:Regiao a owl:Class ; rdfs:subClassOf hk:Localidade ; rdfs:label "Região" .
+hk:SubRegiao a owl:Class ; rdfs:subClassOf hk:Localidade ; rdfs:label "Sub-região" .
+
+hk:Amuleto a owl:Class ; rdfs:subClassOf hk:Item ; rdfs:label "Amuleto" .
+hk:Habilidade a owl:Class ; rdfs:subClassOf hk:Item ; rdfs:label "Habilidade" .
+hk:Equipamento a owl:Class ; rdfs:subClassOf hk:Item ; rdfs:label "Equipamento" .
+hk:Chave a owl:Class ; rdfs:subClassOf hk:Equipamento ; rdfs:label "Chave" .
+hk:Relíquia a owl:Class ; rdfs:subClassOf hk:Item ; rdfs:label "Relíquia" .
+hk:ArteDeUnha a owl:Class ; rdfs:subClassOf hk:Habilidade ; rdfs:label "Arte de Unha" .
+
+# OWL DisjointClasses
+hk:Personagem owl:disjointWith hk:Localidade .
+hk:Personagem owl:disjointWith hk:Item .
+hk:Localidade owl:disjointWith hk:Item .
+
+# ==========================================
+# 2. PROPRIEDADES
+# ==========================================
+hk:habitaEm a owl:ObjectProperty ;
+    rdfs:domain hk:Personagem ;
+    rdfs:range hk:Localidade ;
+    rdfs:label "habita em" .
+
+hk:vende a owl:ObjectProperty ;
+    rdfs:domain hk:NPC ;
+    rdfs:range hk:Item ;
+    rdfs:label "vende" .
+
+hk:compradoDe a owl:ObjectProperty ;
+    owl:inverseOf hk:vende ;
+    rdfs:domain hk:Item ;
+    rdfs:range hk:NPC ;
+    rdfs:label "comprado de" .
+
+hk:concede a owl:ObjectProperty ;
+    rdfs:domain hk:Item ;
+    rdfs:range hk:Habilidade ;
+    rdfs:label "concede" .
+
+hk:localizadoEm a owl:ObjectProperty, owl:TransitiveProperty ;
+    rdfs:domain hk:Localidade ;
+    rdfs:range hk:Localidade ;
+    rdfs:label "localizado em" .
+
+hk:fazFronteiraCom a owl:ObjectProperty, owl:SymmetricProperty ;
+    rdfs:domain hk:Regiao ;
+    rdfs:range hk:Regiao ;
+    rdfs:label "faz fronteira com" .
+
+hk:derrotadoPor a owl:ObjectProperty ;
+    owl:inverseOf hk:habitaEm ;
+    rdfs:domain hk:Localidade ;
+    rdfs:range hk:Boss ;
+    rdfs:label "tem chefe" .
+
+hk:nome a owl:DatatypeProperty, owl:FunctionalProperty ;
+    rdfs:domain hk:Entidade ;
+    rdfs:range xsd:string ;
+    rdfs:label "nome" .
+
+hk:custoGeo a owl:DatatypeProperty ;
+    rdfs:domain hk:Item ;
+    rdfs:range xsd:integer ;
+    rdfs:label "custo em Geo" .
+
+hk:espacosAmuleto a owl:DatatypeProperty ;
+    rdfs:domain hk:Amuleto ;
+    rdfs:range xsd:integer ;
+    rdfs:label "espaços de amuleto (notch)" .
+
+hk:vidaMaxima a owl:DatatypeProperty, owl:FunctionalProperty ;
+    rdfs:domain hk:Boss ;
+    rdfs:range xsd:integer ;
+    rdfs:label "vida máxima (HP)" .
+
+hk:dlc a owl:DatatypeProperty ;
+    rdfs:domain hk:Entidade ;
+    rdfs:range xsd:string ;
+    rdfs:label "pacote de expansão (DLC)" .
+
+# ==========================================
+# 3. INSTÂNCIAS
+# ==========================================
+
+# --- Todas as Regiões Principais ---
+hk:Hallownest a hk:Regiao ; hk:nome "Hallownest" .
+hk:Dirtmouth a hk:Regiao ; hk:nome "Dirtmouth" ; hk:fazFronteiraCom hk:ForgottenCrossroads, hk:HowlingCliffs .
+hk:ForgottenCrossroads a hk:Regiao ; hk:nome "Forgotten Crossroads" ; hk:fazFronteiraCom hk:Greenpath, hk:FungalWastes, hk:CrystalPeak, hk:RestingGrounds .
+hk:Greenpath a hk:Regiao ; hk:nome "Greenpath" ; hk:fazFronteiraCom hk:FogCanyon, hk:HowlingCliffs, hk:QueensGardens .
+hk:FogCanyon a hk:Regiao ; hk:nome "Fog Canyon" ; hk:fazFronteiraCom hk:FungalWastes .
+hk:FungalWastes a hk:Regiao ; hk:nome "Fungal Wastes" ; hk:fazFronteiraCom hk:CityOfTears, hk:Deepnest .
+hk:CityOfTears a hk:Regiao ; hk:nome "City of Tears" ; hk:fazFronteiraCom hk:RoyalWaterways, hk:KingdomsEdge, hk:RestingGrounds .
+hk:RoyalWaterways a hk:Regiao ; hk:nome "Royal Waterways" ; hk:fazFronteiraCom hk:AncientBasin .
+hk:AncientBasin a hk:Regiao ; hk:nome "Ancient Basin" ; hk:fazFronteiraCom hk:TheAbyss .
+hk:TheAbyss a hk:Regiao ; hk:nome "The Abyss" .
+hk:Deepnest a hk:Regiao ; hk:nome "Deepnest" ; hk:fazFronteiraCom hk:QueensGardens .
+hk:QueensGardens a hk:Regiao ; hk:nome "Queen's Gardens" .
+hk:CrystalPeak a hk:Regiao ; hk:nome "Crystal Peak" ; hk:fazFronteiraCom hk:RestingGrounds .
+hk:RestingGrounds a hk:Regiao ; hk:nome "Resting Grounds" .
+hk:KingdomsEdge a hk:Regiao ; hk:nome "Kingdom's Edge" ; hk:fazFronteiraCom hk:TheHive .
+hk:TheHive a hk:Regiao ; hk:nome "The Hive" .
+hk:HowlingCliffs a hk:Regiao ; hk:nome "Howling Cliffs" .
+hk:TheGardensOfGraveyard a hk:Regiao ; hk:nome "The Gardens of Graveyard" ; hk:dlc "Godmaster" .
+
+# --- Sub-regiões Principais ---
+hk:AncestralMound a hk:SubRegiao ; hk:nome "Ancestral Mound" ; hk:localizadoEm hk:ForgottenCrossroads .
+hk:BlackEggTemple a hk:SubRegiao ; hk:nome "Black Egg Temple" ; hk:localizadoEm hk:ForgottenCrossroads .
+hk:LakeOfUnn a hk:SubRegiao ; hk:nome "Lake of Unn" ; hk:localizadoEm hk:Greenpath .
+hk:MantisVillage a hk:SubRegiao ; hk:nome "Mantis Village" ; hk:localizadoEm hk:FungalWastes .
+hk:SoulSanctum a hk:SubRegiao ; hk:nome "Soul Sanctum" ; hk:localizadoEm hk:CityOfTears .
+hk:TowerOfLove a hk:SubRegiao ; hk:nome "Tower of Love" ; hk:localizadoEm hk:CityOfTears .
+hk:KingsStation a hk:SubRegiao ; hk:nome "King's Station" ; hk:localizadoEm hk:CityOfTears .
+hk:WeaversDen a hk:SubRegiao ; hk:nome "Weaver's Den" ; hk:localizadoEm hk:Deepnest .
+hk:DistantVillage a hk:SubRegiao ; hk:nome "Distant Village" ; hk:localizadoEm hk:Deepnest .
+hk:BeastsDen a hk:SubRegiao ; hk:nome "Beast's Den" ; hk:localizadoEm hk:DistantVillage .
+hk:TeachersArchives a hk:SubRegiao ; hk:nome "Teacher's Archives" ; hk:localizadoEm hk:FogCanyon .
+hk:WhitePalace a hk:SubRegiao ; hk:nome "White Palace" ; hk:localizadoEm hk:AncientBasin .
+hk:ColosseumOfFools a hk:SubRegiao ; hk:nome "Colosseum of Fools" ; hk:localizadoEm hk:KingdomsEdge .
+hk:CastDownTemple a hk:SubRegiao ; hk:nome "Cast Down Temple" ; hk:localizadoEm hk:KingdomsEdge .
+hk:BlueLake a hk:SubRegiao ; hk:nome "Blue Lake" ; hk:localizadoEm hk:RestingGrounds .
+hk:GreatHollow a hk:SubRegiao ; hk:nome "Greenpath (Great Hollow)" ; hk:localizadoEm hk:Greenpath .
+hk:PalaceGrounds a hk:SubRegiao ; hk:nome "Palace Grounds" ; hk:localizadoEm hk:AncientBasin .
+
+# --- Protagonista e NPCs ---
+hk:TheKnight a hk:Personagem ; hk:nome "The Knight" .
+hk:Elderbug a hk:NPC ; hk:nome "Elderbug" ; hk:habitaEm hk:Dirtmouth .
+hk:Sly a hk:Vendedor ; hk:nome "Sly" ; hk:habitaEm hk:Dirtmouth .
+hk:Iselda a hk:Vendedor ; hk:nome "Iselda" ; hk:habitaEm hk:Dirtmouth .
+hk:Cornifer a hk:NPC ; hk:nome "Cornifer" .
+hk:Bretta a hk:NPC ; hk:nome "Bretta" ; hk:habitaEm hk:Dirtmouth .
+hk:Zote a hk:NPC ; hk:nome "Zote the Mighty" .
+hk:Quirrel a hk:NPC ; hk:nome "Quirrel" .
+hk:Cloth a hk:NPC ; hk:nome "Cloth" ; hk:dlc "Godmaster" .
+hk:Tiso a hk:NPC ; hk:nome "Tiso" .
+hk:Salubra a hk:Vendedor ; hk:nome "Charm Lover Salubra" ; hk:habitaEm hk:ForgottenCrossroads .
+hk:LegEater a hk:Vendedor ; hk:nome "Leg Eater" ; hk:habitaEm hk:FungalWastes .
+hk:Lemm a hk:Vendedor ; hk:nome "Relic Seeker Lemm" ; hk:habitaEm hk:CityOfTears .
+hk:Nailsmith a hk:Vendedor ; hk:nome "Nailsmith" ; hk:habitaEm hk:CityOfTears .
+hk:Seer a hk:Vendedor ; hk:nome "Seer" ; hk:habitaEm hk:RestingGrounds .
+hk:LittleFool a hk:NPC ; hk:nome "Little Fool" ; hk:habitaEm hk:ColosseumOfFools .
+hk:PaleKing a hk:NPC ; hk:nome "The Pale King" ; hk:habitaEm hk:WhitePalace .
+hk:WhiteLady a hk:NPC ; hk:nome "The White Lady" ; hk:habitaEm hk:QueensGardens .
+hk:Midwife a hk:NPC ; hk:nome "Midwife" ; hk:habitaEm hk:Deepnest .
+hk:Bardoon a hk:NPC ; hk:nome "Bardoon" ; hk:habitaEm hk:KingdomsEdge .
+hk:Marmu a hk:NPC ; hk:nome "Marmu" ; hk:habitaEm hk:QueensGardens .
+hk:Markoth a hk:NPC ; hk:nome "Markoth" ; hk:habitaEm hk:KingdomsEdge .
+hk:Grubfather a hk:Vendedor ; hk:nome "Grubfather" ; hk:habitaEm hk:ForgottenCrossroads .
+hk:GrimmTroupeMaster a hk:NPC ; hk:nome "Troupe Master Grimm (NPC)" ; hk:habitaEm hk:Dirtmouth ; hk:dlc "Grimm Troupe" .
+hk:Divine a hk:NPC ; hk:nome "Divine" ; hk:habitaEm hk:CityOfTears .
+hk:Jiji a hk:NPC ; hk:nome "Jiji" ; hk:habitaEm hk:RestingGrounds .
+hk:MaskMaker a hk:NPC ; hk:nome "Mask Maker" ; hk:habitaEm hk:CityOfTears .
+hk:BrettasCage a hk:NPC ; hk:nome "Millibelle the Banker" ; hk:habitaEm hk:CityOfTears .
+hk:GreatNailsageSly a hk:NPC ; hk:nome "Great Nailsage Sly" ; hk:dlc "Godmaster" .
+
+# --- Chefões ---
+hk:FalseKnight a hk:Boss ; hk:nome "False Knight" ; hk:habitaEm hk:ForgottenCrossroads ; hk:vidaMaxima 250 .
+hk:GruzMother a hk:Boss ; hk:nome "Gruz Mother" ; hk:habitaEm hk:ForgottenCrossroads ; hk:vidaMaxima 100 .
+hk:BroodingMawlek a hk:Boss ; hk:nome "Brooding Mawlek" ; hk:habitaEm hk:ForgottenCrossroads ; hk:vidaMaxima 150 .
+hk:HornetProtector a hk:Boss ; hk:nome "Hornet Protector" ; hk:habitaEm hk:Greenpath ; hk:vidaMaxima 300 .
+hk:MassiveMossCharger a hk:Boss ; hk:nome "Massive Moss Charger" ; hk:habitaEm hk:Greenpath ; hk:vidaMaxima 500 .
+hk:MantisLords a hk:Boss ; hk:nome "Mantis Lords" ; hk:habitaEm hk:MantisVillage ; hk:vidaMaxima 375 .
+hk:SoulMaster a hk:Boss ; hk:nome "Soul Master" ; hk:habitaEm hk:SoulSanctum ; hk:vidaMaxima 700 .
+hk:DungDefender a hk:Boss ; hk:nome "Dung Defender" ; hk:habitaEm hk:RoyalWaterways ; hk:vidaMaxima 555 .
+hk:Flukemarm a hk:Boss ; hk:nome "Flukemarm" ; hk:habitaEm hk:RoyalWaterways ; hk:vidaMaxima 1230 .
+hk:CrystalGuardian a hk:Boss ; hk:nome "Crystal Guardian" ; hk:habitaEm hk:CrystalPeak ; hk:vidaMaxima 800 .
+hk:BrokenVessel a hk:Boss ; hk:nome "Broken Vessel" ; hk:habitaEm hk:AncientBasin ; hk:vidaMaxima 1187 .
+hk:Nosk a hk:Boss ; hk:nome "Nosk" ; hk:habitaEm hk:Deepnest ; hk:vidaMaxima 500 .
+hk:Uumuu a hk:Boss ; hk:nome "Uumuu" ; hk:habitaEm hk:TeachersArchives ; hk:vidaMaxima 620 .
+hk:HiveKnight a hk:Boss ; hk:nome "Hive Knight" ; hk:habitaEm hk:TheHive ; hk:vidaMaxima 660 .
+hk:WatcherKnights a hk:Boss ; hk:nome "Watcher Knights" ; hk:habitaEm hk:CityOfTears ; hk:vidaMaxima 750 .
+hk:TheCollector a hk:Boss ; hk:nome "The Collector" ; hk:habitaEm hk:TowerOfLove ; hk:vidaMaxima 1200 .
+hk:TraitorLord a hk:Boss ; hk:nome "Traitor Lord" ; hk:habitaEm hk:QueensGardens ; hk:vidaMaxima 475 .
+hk:HornetSentinel a hk:Boss ; hk:nome "Hornet Sentinel" ; hk:habitaEm hk:CastDownTemple ; hk:vidaMaxima 800 .
+hk:TheHollowKnight a hk:Boss ; hk:nome "The Hollow Knight" ; hk:habitaEm hk:BlackEggTemple ; hk:vidaMaxima 1800 .
+hk:TheRadiance a hk:Boss ; hk:nome "The Radiance" ; hk:habitaEm hk:BlackEggTemple ; hk:vidaMaxima 800 .
+hk:TroupeMasterGrimm a hk:Boss ; hk:nome "Troupe Master Grimm" ; hk:habitaEm hk:Dirtmouth ; hk:vidaMaxima 900 ; hk:dlc "Grimm Troupe" .
+hk:NightmareKing a hk:Boss ; hk:nome "Nightmare King Grimm" ; hk:habitaEm hk:Dirtmouth ; hk:vidaMaxima 1200 ; hk:dlc "Grimm Troupe" .
+hk:PureVessel a hk:Boss ; hk:nome "The Pure Vessel" ; hk:habitaEm hk:BlackEggTemple ; hk:vidaMaxima 2500 ; hk:dlc "Godmaster" .
+hk:GreyPrinceZote a hk:Boss ; hk:nome "Grey Prince Zote" ; hk:vidaMaxima 1500 ; hk:dlc "Godmaster" .
+hk:SistersOfBattle a hk:Boss ; hk:nome "Sisters of Battle" ; hk:habitaEm hk:QueensGardens ; hk:dlc "Godmaster" .
+hk:AbsoluteRadiance a hk:Boss ; hk:nome "Absolute Radiance" ; hk:vidaMaxima 1900 ; hk:dlc "Godmaster" .
+
+# --- Inimigos Comuns (amostra por região) ---
+hk:Vengefly a hk:InimigoComum ; hk:nome "Vengefly" ; hk:habitaEm hk:ForgottenCrossroads .
+hk:Crawlid a hk:InimigoComum ; hk:nome "Crawlid" ; hk:habitaEm hk:ForgottenCrossroads .
+hk:HuskGuard a hk:InimigoComum ; hk:nome "Husk Guard" ; hk:habitaEm hk:ForgottenCrossroads .
+hk:ZombieMiner a hk:InimigoComum ; hk:nome "Zombie Miner" ; hk:habitaEm hk:CrystalPeak .
+hk:ShrumalOgre a hk:InimigoComum ; hk:nome "Shrumal Ogre" ; hk:habitaEm hk:FungalWastes .
+hk:MossKnight a hk:InimigoComum ; hk:nome "Moss Knight" ; hk:habitaEm hk:Greenpath .
+hk:VengeflyKing a hk:InimigoComum ; hk:nome "Vengefly King" ; hk:habitaEm hk:HowlingCliffs .
+hk:GardenGhoul a hk:InimigoComum ; hk:nome "Garden Ghoul" ; hk:habitaEm hk:QueensGardens .
+hk:MistakenVessel a hk:InimigoComum ; hk:nome "Mistaken Vessel" ; hk:habitaEm hk:AncientBasin .
+hk:Aspid a hk:InimigoComum ; hk:nome "Aspid Hunter" ; hk:habitaEm hk:KingdomsEdge .
+
+# --- Amuletos ---
+hk:WaywardCompass a hk:Amuleto ; hk:nome "Wayward Compass" ; hk:custoGeo 220 ; hk:espacosAmuleto 1 .
+hk:GatheringSwarm a hk:Amuleto ; hk:nome "Gathering Swarm" ; hk:custoGeo 300 ; hk:espacosAmuleto 1 .
+hk:StalwartShell a hk:Amuleto ; hk:nome "Stalwart Shell" ; hk:custoGeo 200 ; hk:espacosAmuleto 2 .
+hk:SoulCatcher a hk:Amuleto ; hk:nome "Soul Catcher" ; hk:espacosAmuleto 2 .
+hk:ShamanStone a hk:Amuleto ; hk:nome "Shaman Stone" ; hk:custoGeo 220 ; hk:espacosAmuleto 3 .
+hk:SoulEater a hk:Amuleto ; hk:nome "Soul Eater" ; hk:espacosAmuleto 4 .
+hk:Dashmaster a hk:Amuleto ; hk:nome "Dashmaster" ; hk:espacosAmuleto 2 .
+hk:Sprintmaster a hk:Amuleto ; hk:nome "Sprintmaster" ; hk:espacosAmuleto 1 .
+hk:Grubsong a hk:Amuleto ; hk:nome "Grubsong" ; hk:espacosAmuleto 1 .
+hk:FragileHeart a hk:Amuleto ; hk:nome "Fragile Heart" ; hk:custoGeo 350 ; hk:espacosAmuleto 2 .
+hk:FragileGreed a hk:Amuleto ; hk:nome "Fragile Greed" ; hk:custoGeo 250 ; hk:espacosAmuleto 2 .
+hk:FragileStrength a hk:Amuleto ; hk:nome "Fragile Strength" ; hk:custoGeo 600 ; hk:espacosAmuleto 3 .
+hk:UnbreakableHeart a hk:Amuleto ; hk:nome "Unbreakable Heart" ; hk:custoGeo 900 ; hk:espacosAmuleto 2 .
+hk:UnbreakableGreed a hk:Amuleto ; hk:nome "Unbreakable Greed" ; hk:custoGeo 900 ; hk:espacosAmuleto 2 .
+hk:UnbreakableStrength a hk:Amuleto ; hk:nome "Unbreakable Strength" ; hk:custoGeo 900 ; hk:espacosAmuleto 3 .
+hk:SpellTwister a hk:Amuleto ; hk:nome "Spell Twister" ; hk:espacosAmuleto 2 .
+hk:SteadyBody a hk:Amuleto ; hk:nome "Steady Body" ; hk:custoGeo 120 ; hk:espacosAmuleto 1 .
+hk:HeavyBlow a hk:Amuleto ; hk:nome "Heavy Blow" ; hk:custoGeo 350 ; hk:espacosAmuleto 2 .
+hk:QuickSlash a hk:Amuleto ; hk:nome "Quick Slash" ; hk:espacosAmuleto 3 .
+hk:Longnail a hk:Amuleto ; hk:nome "Longnail" ; hk:custoGeo 300 ; hk:espacosAmuleto 2 .
+hk:MarkOfPride a hk:Amuleto ; hk:nome "Mark of Pride" ; hk:espacosAmuleto 3 .
+hk:FuryOfTheFallen a hk:Amuleto ; hk:nome "Fury of the Fallen" ; hk:espacosAmuleto 2 .
+hk:ThornsOfAgony a hk:Amuleto ; hk:nome "Thorns of Agony" ; hk:espacosAmuleto 1 .
+hk:BaldurShell a hk:Amuleto ; hk:nome "Baldur Shell" ; hk:espacosAmuleto 2 .
+hk:Flukenest a hk:Amuleto ; hk:nome "Flukenest" ; hk:espacosAmuleto 3 .
+hk:DefendersCrest a hk:Amuleto ; hk:nome "Defender's Crest" ; hk:espacosAmuleto 1 .
+hk:GlowingWomb a hk:Amuleto ; hk:nome "Glowing Womb" ; hk:espacosAmuleto 2 .
+hk:QuickFocus a hk:Amuleto ; hk:nome "Quick Focus" ; hk:custoGeo 800 ; hk:espacosAmuleto 3 .
+hk:DeepFocus a hk:Amuleto ; hk:nome "Deep Focus" ; hk:espacosAmuleto 4 .
+hk:LifebloodHeart a hk:Amuleto ; hk:nome "Lifeblood Heart" ; hk:custoGeo 250 ; hk:espacosAmuleto 2 .
+hk:LifebloodCore a hk:Amuleto ; hk:nome "Lifeblood Core" ; hk:espacosAmuleto 3 .
+hk:JonisBlessing a hk:Amuleto ; hk:nome "Joni's Blessing" ; hk:espacosAmuleto 4 .
+hk:Hiveblood a hk:Amuleto ; hk:nome "Hiveblood" ; hk:espacosAmuleto 4 .
+hk:SporeShroom a hk:Amuleto ; hk:nome "Spore Shroom" ; hk:espacosAmuleto 1 .
+hk:SharpShadow a hk:Amuleto ; hk:nome "Sharp Shadow" ; hk:espacosAmuleto 2 .
+hk:ShapeOfUnn a hk:Amuleto ; hk:nome "Shape of Unn" ; hk:espacosAmuleto 2 .
+hk:NailmastersGlory a hk:Amuleto ; hk:nome "Nailmaster's Glory" ; hk:espacosAmuleto 1 .
+hk:Weaversong a hk:Amuleto ; hk:nome "Weaversong" ; hk:espacosAmuleto 2 .
+hk:DreamWielder a hk:Amuleto ; hk:nome "Dream Wielder" ; hk:espacosAmuleto 1 .
+hk:Kingsoul a hk:Amuleto ; hk:nome "Kingsoul" ; hk:espacosAmuleto 5 .
+hk:VoidHeart a hk:Amuleto ; hk:nome "Void Heart" ; hk:espacosAmuleto 0 .
+hk:Grimmchild a hk:Amuleto ; hk:nome "Grimmchild" ; hk:espacosAmuleto 2 ; hk:dlc "Grimm Troupe" .
+hk:CarefreeMelody a hk:Amuleto ; hk:nome "Carefree Melody" ; hk:espacosAmuleto 2 ; hk:dlc "Grimm Troupe" .
+
+# --- Habilidades (Feitiços, Movimentos e Artes de Unha) ---
+hk:VengefulSpirit a hk:Habilidade ; hk:nome "Vengeful Spirit" .
+hk:DesolateDive a hk:Habilidade ; hk:nome "Desolate Dive" .
+hk:HowlingWraiths a hk:Habilidade ; hk:nome "Howling Wraiths" .
+hk:ShadeSoul a hk:Habilidade ; hk:nome "Shade Soul" .
+hk:DescendingDark a hk:Habilidade ; hk:nome "Descending Dark" .
+hk:AbyssShriek a hk:Habilidade ; hk:nome "Abyss Shriek" .
+hk:MothwingCloak a hk:Habilidade ; hk:nome "Mothwing Cloak" .
+hk:ShadeCloak a hk:Habilidade ; hk:nome "Shade Cloak" .
+hk:MantisClaw a hk:Habilidade ; hk:nome "Mantis Claw" .
+hk:CrystalHeart a hk:Habilidade ; hk:nome "Crystal Heart" .
+hk:MonarchWings a hk:Habilidade ; hk:nome "Monarch Wings" .
+hk:IsmasTear a hk:Habilidade ; hk:nome "Isma's Tear" .
+hk:DreamNail a hk:Habilidade ; hk:nome "Dream Nail" .
+hk:AwokenDreamNail a hk:Habilidade ; hk:nome "Awoken Dream Nail" .
+hk:CycloneSlash a hk:ArteDeUnha ; hk:nome "Cyclone Slash" .
+hk:DashSlash a hk:ArteDeUnha ; hk:nome "Dash Slash" .
+hk:GreatSlash a hk:ArteDeUnha ; hk:nome "Great Slash" .
+
+# --- Equipamentos ---
+hk:OldNail a hk:Equipamento ; hk:nome "Old Nail" .
+hk:SharpenedNail a hk:Equipamento ; hk:nome "Sharpened Nail" ; hk:custoGeo 250 .
+hk:ChanneledNail a hk:Equipamento ; hk:nome "Channeled Nail" ; hk:custoGeo 800 .
+hk:CoiledNail a hk:Equipamento ; hk:nome "Coiled Nail" ; hk:custoGeo 2000 .
+hk:PureNail a hk:Equipamento ; hk:nome "Pure Nail" ; hk:custoGeo 4000 .
+hk:SimpleKey a hk:Chave ; hk:nome "Simple Key" ; hk:custoGeo 950 .
+hk:ElegantKey a hk:Chave ; hk:nome "Elegant Key" .
+hk:CityCrestKey a hk:Chave ; hk:nome "City Crest" .
+hk:LanternDelicateFlower a hk:Equipamento ; hk:nome "Lumafly Lantern" ; hk:custoGeo 1800 .
+hk:VesselFragment a hk:Relíquia ; hk:nome "Vessel Fragment" .
+hk:PaleOre a hk:Relíquia ; hk:nome "Pale Ore" .
+hk:RancidEgg a hk:Relíquia ; hk:nome "Rancid Egg" ; hk:custoGeo 16 .
+hk:KingsIdol a hk:Relíquia ; hk:nome "King's Idol" .
+hk:WanderersJournal a hk:Relíquia ; hk:nome "Wanderer's Journal" .
+hk:HallownestSeal a hk:Relíquia ; hk:nome "Hallownest Seal" .
+hk:ArcaneEgg a hk:Relíquia ; hk:nome "Arcane Egg" .
+
+# ==========================================
+# 4. RELAÇÕES DE COMÉRCIO (hk:vende)
+# ==========================================
+hk:Iselda hk:vende hk:WaywardCompass, hk:SimpleKey .
+
+hk:Sly hk:vende hk:GatheringSwarm, hk:StalwartShell, hk:HeavyBlow, hk:Sprintmaster,
+    hk:Longnail, hk:LifebloodCore, hk:RancidEgg, hk:LanternDelicateFlower .
+
+hk:Salubra hk:vende hk:ShamanStone, hk:QuickFocus, hk:LifebloodHeart, hk:SteadyBody .
+
+hk:LegEater hk:vende hk:FragileHeart, hk:FragileGreed, hk:FragileStrength,
+    hk:UnbreakableHeart, hk:UnbreakableGreed, hk:UnbreakableStrength .
+
+hk:Nailsmith hk:vende hk:SharpenedNail, hk:ChanneledNail, hk:CoiledNail, hk:PureNail .
+
+hk:Seer hk:vende hk:DreamWielder, hk:Dashmaster, hk:Grubsong, hk:DeepFocus .
+
+hk:Lemm hk:vende hk:WanderersJournal, hk:HallownestSeal, hk:KingsIdol, hk:ArcaneEgg .
+
+hk:Grubfather hk:vende hk:GatheringSwarm .
+
+# Relações inversas explícitas (equivalem a hk:vende, mas na direção Item -> NPC)
+hk:WaywardCompass hk:compradoDe hk:Iselda .
+hk:SharpenedNail hk:compradoDe hk:Nailsmith .
+
+# ==========================================
+# 5. HABILIDADES CONCEDIDAS POR ITENS (hk:concede)
+# ==========================================
+hk:PureNail hk:concede hk:GreatSlash, hk:CycloneSlash, hk:DashSlash .
+hk:DreamNail hk:concede hk:AwokenDreamNail .
+
+# ==========================================
+# 6. LOCALIZAÇÃO TRANSITIVA (exemplos)
+# ==========================================
+hk:AncestralMound hk:localizadoEm hk:Hallownest .
+hk:WhitePalace hk:localizadoEm hk:Hallownest .
