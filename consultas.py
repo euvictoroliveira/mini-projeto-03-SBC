@@ -1,9 +1,13 @@
+import owlrl
 from rdflib import Graph, Namespace, URIRef, Literal
 from rdflib.namespace import RDF, RDFS, OWL
 
 # Carregar o grafo
 g = Graph()
 g.parse("hollow_knight_ontologia.ttl", format="turtle")
+
+# Deduza e expanda as triplas com base nas regras OWL (incluindo owl:inverseOf)
+owlrl.DeductiveClosure(owlrl.OWLRL_Semantics).expand(g)
 
 HK = Namespace("http://example.org/hollowknight#")
 
