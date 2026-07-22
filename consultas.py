@@ -2,11 +2,11 @@ import owlrl
 from rdflib import Graph, Namespace, URIRef, Literal
 from rdflib.namespace import RDF, RDFS, OWL
 
-# Carregar o grafo
+# Responsável por carregar o grafo RDF
 g = Graph()
 g.parse("hollow_knight_ontologia.ttl", format="turtle")
 
-# Deduza e expanda as triplas com base nas regras OWL (incluindo owl:inverseOf)
+# Deduz e expande as triplas com base nas regras OWL
 owlrl.DeductiveClosure(owlrl.OWLRL_Semantics).expand(g)
 
 HK = Namespace("http://example.org/hollowknight#")
@@ -16,6 +16,8 @@ print(f"Grafo carregado com {len(g)} triplas.\n")
 print("="*50)
 print("PARTE 1: Consultas g.triples()")
 print("="*50)
+
+# Consultas com g.triples()
 
 # 1. Sujeito Fixo: Encontrar todas as propriedades e objetos para 'Elderbug'
 print("\n1. Tudo sobre The Knight:")
@@ -47,7 +49,9 @@ print("\n" + "="*50)
 print("PARTE 2: Consultas SPARQL")
 print("="*50)
 
-# 1. SELECT com FILTER: Encontrar itens que custam mais de 200 Geo
+# Consultas SPARQL
+
+# 1. SELECT com FILTER: Encontrar itens que custam mais do que 200 Geo
 q1 = """
 SELECT ?nome ?custo WHERE {
     ?item rdf:type hk:Amuleto .
@@ -99,7 +103,7 @@ for stmt in sub_graph:
     # E passamos as variáveis de tamanho entre as chaves extras
     print(f"  - {sujeito:<{tam_max_sujeito+1}} vende {objeto:<{tam_max_objeto}}")
 
-# 5. UPDATE - INSERT: Adicionar um novo personagem 'Myla'
+# 5. UPDATE - INSERT: Adicionar um novo personagem chamado'Myla'
 update_insert = """
 PREFIX hk: <http://example.org/hollowknight#>
 INSERT DATA {
