@@ -1,20 +1,23 @@
 # Mini-Projeto 3: Ontologia de Hollow Knight (Sistemas Baseados em Conhecimento)
 
-**Equipe:**
+**Instituição:** Universidade Federal da Paraíba (UFPB) - Ciência da Computação  
+**Período:** 2026.1  
 
-Período: **2026.1**
 ---
+
 ## Equipe
 
 | #   | Nome completo             | Matrícula       |
 | --- | ------------------------- | --------------- |
-| 1   | *João Victor Oliveira*    | *(20240008468)* |
-| 2   | *Kevin Gabriel Mangueira* | *(20240008000)* |
-| 3   | *Luiz Henrique Santos*    | *(20240008261)* |
-| 4   | *Victor Gabriel Menezes*  | *(20240008323)* |
+| 1   | João Victor Oliveira      | (20240008468)   |
+| 2   | Kevin Gabriel Mangueira   | (20240008000)   |
+| 3   | Luiz Henrique Santos      | (20240008261)   |
+| 4   | Victor Gabriel Menezes    | (20240008323)   |
+
+---
 
 ## Resumo da Base
-Este projeto consiste na modelagem de um Grafo de Conhecimento baseado no universo do jogo Hollow Knight. A base foi construída utilizando as linguagens RDF, RDFS e OWL, e estruturada no formato Turtle (`.ttl`). O objetivo da ontologia é mapear as complexas relações do jogo, interligando os personagens, as localidades que habitam, os itens que comercializam e as habilidades que o jogador pode adquirir.
+Este projeto consiste na modelagem de um Grafo de Conhecimento baseado no universo do jogo Hollow Knight. A base foi construída utilizando as linguagens RDF, RDFS e OWL, e estruturada no formato Turtle (`.ttl`). O objetivo da ontologia é mapear as complexas relações do jogo, interligando os personagens, as localidades que habitam, os itens que comercializam e as habilidades que o jogador pode adquirir. Além do armazenamento estático, o projeto utiliza raciocínio lógico (inferência) para deduzir novas relações no grafo dinamicamente.
 
 ## Principais Entidades e Classes
 * **Entidade:** A classe raiz que engloba tudo no universo mapeado.
@@ -25,17 +28,20 @@ Este projeto consiste na modelagem de um Grafo de Conhecimento baseado no univer
 * **Amuleto:** Itens que consomem espaços e concedem vantagens.
 
 ## Explicação Básica da Taxonomia (Hierarquia)
-A taxonomia foi desenhada com dois níveis principais abaixo da raiz (`hk:Entidade`), garantindo a organização hierárquica exigida. A classe `hk:Personagem` ramifica-se em `hk:Boss`, `hk:NPC` e `hk:InimigoComum`. A classe `hk:Localidade` divide-se em `hk:Regiao` (áreas amplas como Hallownest e Dirtmouth) e `hk:SubRegiao` (áreas menores contidas nas regiões maiores). Por fim, a classe `hk:Item` ramifica-se em `hk:Amuleto`, `hk:Habilidade` e `hk:Equipamento`. Classes disjuntas foram aplicadas para garantir que, por exemplo, um personagem não possa ser classificado como um mapa ou um item.
+A taxonomia foi desenhada com dois níveis principais abaixo da raiz (`hk:Entidade`), garantindo a organização hierárquica exigida. A classe `hk:Personagem` ramifica-se em `hk:Boss`, `hk:NPC` e `hk:InimigoComum`. A classe `hk:Localidade` divide-se em `hk:Regiao` (áreas amplas como Hallownest e Dirtmouth) e `hk:SubRegiao` (áreas menores contidas nas regiões maiores). Por fim, a classe `hk:Item` ramifica-se em `hk:Amuleto`, `hk:Habilidade` e `hk:Equipamento`. Classes disjuntas foram aplicadas para garantir que, por exemplo, um personagem não possa ser classificado simultaneamente como um mapa ou um item.
+
+---
 
 ## Instruções de Execução
 
 **Pré-requisitos:**
-* Python 3.x instalado.
-* Biblioteca `rdflib` instalada.
+* Python 3.x instalado na máquina.
+* Editor de código (VS Code) ou ambiente Jupyter Notebook.
 
-**Passo a passo:**
+**Passo a Passo:**
 1. Clone este repositório em sua máquina local.
-2. Abra o terminal na pasta do projeto.
-3. Instale a dependência necessária executando o comando: `pip install rdflib`
-4. Execute a aplicação principal com o comando: `python consultas.py` (ou execute as células caso esteja usando um Jupyter Notebook `consultas.ipynb`).
-5. A aplicação carregará o arquivo `hollow_knight_ontologia.ttl` e imprimirá automaticamente no terminal os resultados das 5 consultas `g.triples()` e das 8 consultas SPARQL, detalhando o propósito de cada uma.
+2. Abra o terminal na pasta raiz do projeto e crie um ambiente virtual (`.venv`) para isolar as dependências. 
+3. Ative o ambiente virtual criado. No Windows, utilize o comando `.\.venv\Scripts\activate`. No Linux, utilize `source .venv/bin/activate`.
+4. Instale as bibliotecas necessárias executando o comando: `pip install rdflib owlrl ipykernel`.
+5. Execute a aplicação principal rodando `python consultas.py` no terminal, ou certifique-se de selecionar o Kernel do ambiente virtual recém-criado caso opte por executar as células do arquivo `consultas.ipynb`.
+6. A aplicação carregará o arquivo `hollow_knight_ontologia.ttl`, aplicará as regras de inferência em memória e imprimirá automaticamente no terminal os resultados das consultas `g.triples()` e SPARQL.
