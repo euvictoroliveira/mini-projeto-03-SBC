@@ -253,10 +253,19 @@ def obter_cor(nome_entidade):
 G = nx.DiGraph()
 
 predicados_ignorados = [
-    RDF.type, RDFS.subClassOf, RDFS.domain, RDFS.range, 
-    RDFS.label, RDFS.comment, OWL.disjointWith, OWL.inverseOf,
-    OWL.TransitiveProperty, OWL.SymmetricProperty, 
-    OWL.FunctionalProperty, OWL.Ontology
+    # Tipagem e Classes
+    RDF.type, RDFS.subClassOf, OWL.equivalentClass, OWL.disjointWith,
+    
+    # Textos e Ontologia
+    RDFS.label, RDFS.comment, OWL.Ontology,
+    
+    # Propriedades e Lógica de Inferência
+    RDFS.domain, RDFS.range, OWL.inverseOf, 
+    OWL.TransitiveProperty, OWL.SymmetricProperty, OWL.FunctionalProperty, 
+    RDFS.subPropertyOf, OWL.equivalentProperty, 
+    
+    # Identidade
+    OWL.sameAs, OWL.differentFrom, OWL.AllDifferent
 ]
 
 for s, p, o in g:
@@ -320,7 +329,7 @@ nome_arquivo = "hollow_knight_grafo.html"
 net.write_html(nome_arquivo)
 
 # ==========================================================
-# 4. INJEÇÃO DOS PAINÉIS LATERAIS E SCRIPTS (Atualizado para Labels)
+# INJEÇÃO DOS PAINÉIS LATERAIS E SCRIPTS (Atualizado para Labels)
 # ==========================================================
 with open(nome_arquivo, "r", encoding="utf-8") as f:
     conteudo_html = f.read()
@@ -400,4 +409,3 @@ with open(nome_arquivo, "w", encoding="utf-8") as f:
 
 caminho_completo = f"file://{os.path.abspath(nome_arquivo)}"
 webbrowser.open(caminho_completo)
-print("Interface visual corrigida gerada com sucesso!")
