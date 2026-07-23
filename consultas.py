@@ -110,15 +110,38 @@ INSERT DATA {
 g.update(update_insert)
 print("\n5. SPARQL UPDATE (INSERT): Myla adicionada ao grafo.")
 
-# 6. UPDATE - DELETE: Remover 'Crawlid' do grafo (Problema 3 resolvido: Instância real)
+# 6.1. UPDATE - VERIFICAÇÃO: Checar se 'Soul Master' existe antes de deletar
+query_check = """
+PREFIX hk: <http://example.org/hollowknight#>
+ASK { 
+    hk:SoulMaster ?p ?o . 
+}
+"""
+existe_soul_master = bool(g.query(query_check))
+
+if existe_soul_master:
+    print("\n6.1. SPARQL UPDATE (VERIFICAÇÃO): O Soul Master EXISTE no grafo. Preparando para a remoção...")
+else:
+    print("\n6.1. SPARQL UPDATE (VERIFICAÇÃO): O Soul Master NÃO FOI ENCONTRADO no grafo.")
+
+# 6.2. UPDATE - DELETE: Remover 'Soul Master' do grafo
 update_delete = """
 PREFIX hk: <http://example.org/hollowknight#>
 DELETE WHERE {
-    hk:Crawlid ?p ?o .
+    hk:SoulMaster ?p ?o .
 }
 """
 g.update(update_delete)
-print("\n6. SPARQL UPDATE (DELETE): Crawlid removido do grafo.")
+print("6.2. SPARQL UPDATE (DELETE): Soul Master removido do grafo.")
+
+# 6.3 UPDATE - VERIFICAÇÃO: Checar se 'Soul Master' existe antes de deletar
+# O rdflib permite converter o resultado do ASK diretamente para um booleano (True/False)
+existe_soul_master = bool(g.query(query_check))
+
+if existe_soul_master:
+    print("6.3. SPARQL UPDATE (VERIFICAÇÃO): O Soul Master EXISTE no grafo. Preparando para a remoção...")
+else:
+    print("6.3. SPARQL UPDATE (VERIFICAÇÃO): O Soul Master NÃO FOI ENCONTRADO no grafo.")
 
 # 7. UPDATE - DELETE/INSERT: Mover Elderbug para Greenpath
 update_move = """
