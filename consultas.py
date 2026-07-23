@@ -6,20 +6,18 @@ from rdflib.namespace import RDF, RDFS, OWL
 g = Graph()
 g.parse("hollow_knight_ontologia.ttl", format="turtle")
 
-# Deduz e expande as triplas com base nas regras OWL
+# Deduz e expande as triplas com base nas regras OWL (Problema 2 resolvido: Ativação Global)
 owlrl.DeductiveClosure(owlrl.OWLRL_Semantics).expand(g)
 
 HK = Namespace("http://example.org/hollowknight#")
 
-print(f"Grafo carregado com {len(g)} triplas.\n")
+print(f"Grafo carregado e expandido com {len(g)} triplas.\n")
 
 print("="*50)
 print("PARTE 1: Consultas g.triples()")
 print("="*50)
 
-# Consultas com g.triples()
-
-# 1. Sujeito Fixo: Encontrar todas as propriedades e objetos para 'Elderbug'
+# 1. Sujeito Fixo: Encontrar todas as propriedades e objetos para 'The Knight'
 print("\n1. Tudo sobre The Knight:")
 for s, p, o in g.triples((HK.TheKnight, None, None)):
     print(f"  - {p.split('#')[-1]} -> {o.split('#')[-1] if '#' in o else o}")
@@ -29,8 +27,8 @@ print("\n2. Todos os Bosses:")
 for s, p, o in g.triples((None, RDF.type, HK.Boss)):
     print(f"  - {s.split('#')[-1]}")
 
-# 3. Objeto Fixo: Encontrar quem vive em 'Forgotten Crossroads'
-print("\n3. Vivem em Dirthmouth:")
+# 3. Objeto Fixo: Encontrar quem vive em 'Dirtmouth'
+print("\n3. Vivem em Dirtmouth:")
 for s, p, o in g.triples((None, HK.habitaEm, HK.Dirtmouth)):
     print(f"  - {s.split('#')[-1]}")
 
@@ -49,9 +47,7 @@ print("\n" + "="*50)
 print("PARTE 2: Consultas SPARQL")
 print("="*50)
 
-# Consultas SPARQL
-
-# 1. SELECT com FILTER: Encontrar itens que custam mais do que 200 Geo
+# 1. SELECT com FILTER: Encontrar itens que custam mais do que 250 Geo
 q1 = """
 SELECT ?nome ?custo WHERE {
     ?item rdf:type hk:Amuleto .
@@ -64,22 +60,22 @@ print("\n1. SPARQL SELECT (Filter): Amuletos > 250 Geo")
 for row in g.query(q1):
     print(f"  - {row.nome} custa {row.custo}")
 
-# 2. SELECT com ORDER BY: Ordenar personagens por nome
+# 2. SELECT com ORDER BY: Ordenar personagens por nome (Problema 2 resolvido: DISTINCT)
 q2 = """
-SELECT ?nome WHERE {
+SELECT DISTINCT ?nome WHERE {
     ?char rdf:type/rdfs:subClassOf* hk:Personagem .
     ?char hk:nome ?nome .
 } ORDER BY ASC(?nome)
 """
-print("\n2. SPARQL SELECT (Order By): Personagens em ordem alfabética")
+print("\n2. SPARQL SELECT (Order By): Personagens em ordem alfabética (sem duplicatas)")
 for row in g.query(q2):
     print(f"  - {row.nome}")
 
-# 3. ASK: A Hornet vive em Greenpath?
+# 3. ASK: A Hornet Protector vive em Greenpath? (Problema 3 resolvido: Instância real)
 q3 = """
-ASK { hk:Hornet hk:habitaEm hk:Dirtmouth . }
+ASK { hk:HornetProtector hk:habitaEm hk:Greenpath . }
 """
-print("\n3. SPARQL ASK: A Hornet vive em Dirtmouth?")
+print("\n3. SPARQL ASK: A Hornet Protector vive em Greenpath?")
 for row in g.query(q3):
     print(f"  - Resultado: {row}")
 
@@ -92,18 +88,17 @@ print("\n4. SPARQL CONSTRUCT: Sub-grafo de mercadores criado. (ordenado)")
 sub_graph = g.query(q4)
 sub_graph = sorted(sub_graph, key=lambda tripla : tripla[0])
 
-tam_max_sujeito = max(len(stmt[0].split('#')[-1]) for stmt in sub_graph)
-tam_max_objeto = max(len(stmt[2].split('#')[-1]) for stmt in sub_graph)
+if sub_graph:
+    tam_max_sujeito = max(len(stmt[0].split('#')[-1]) for stmt in sub_graph)
+    tam_max_objeto = max(len(stmt[2].split('#')[-1]) for stmt in sub_graph)
+    for stmt in sub_graph:
+        sujeito = stmt[0].split('#')[-1]
+        objeto = stmt[2].split('#')[-1]
+        print(f"  - {sujeito:<{tam_max_sujeito+1}} vende {objeto:<{tam_max_objeto}}")
+else:
+    print("  - Nenhum mercador encontrado.")
 
-
-for stmt in sub_graph:
-    sujeito = stmt[0].split('#')[-1]
-    objeto = stmt[2].split('#')[-1]
-    
-    # E passamos as variáveis de tamanho entre as chaves extras
-    print(f"  - {sujeito:<{tam_max_sujeito+1}} vende {objeto:<{tam_max_objeto}}")
-
-# 5. UPDATE - INSERT: Adicionar um novo personagem chamado'Myla'
+# 5. UPDATE - INSERT: Adicionar um novo personagem chamado 'Myla'
 update_insert = """
 PREFIX hk: <http://example.org/hollowknight#>
 INSERT DATA {
@@ -115,15 +110,15 @@ INSERT DATA {
 g.update(update_insert)
 print("\n5. SPARQL UPDATE (INSERT): Myla adicionada ao grafo.")
 
-# 6. UPDATE - DELETE: Remover 'Tiktik' do grafo
+# 6. UPDATE - DELETE: Remover 'Crawlid' do grafo (Problema 3 resolvido: Instância real)
 update_delete = """
 PREFIX hk: <http://example.org/hollowknight#>
 DELETE WHERE {
-    hk:Tiktik ?p ?o .
+    hk:Crawlid ?p ?o .
 }
 """
 g.update(update_delete)
-print("\n6. SPARQL UPDATE (DELETE): Tiktik removido do grafo.")
+print("\n6. SPARQL UPDATE (DELETE): Crawlid removido do grafo.")
 
 # 7. UPDATE - DELETE/INSERT: Mover Elderbug para Greenpath
 update_move = """
