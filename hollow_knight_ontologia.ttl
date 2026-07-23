@@ -20,8 +20,14 @@ hk:Item a owl:Class ; rdfs:subClassOf hk:Entidade ; rdfs:label "Item" .
 hk:Boss a owl:Class ; rdfs:subClassOf hk:Personagem ; rdfs:label "Chefe" .
 hk:NPC a owl:Class ; rdfs:subClassOf hk:Personagem ; rdfs:label "NPC" .
 hk:InimigoComum a owl:Class ; rdfs:subClassOf hk:Personagem ; rdfs:label "Inimigo Comum" .
-hk:Vendedor a owl:Class ; rdfs:subClassOf hk:NPC ; rdfs:label "Vendedor" ;
-    rdfs:comment "NPC que possui pelo menos um item à venda via hk:vende." .
+hk:Vendedor a owl:Class ;
+    rdfs:subClassOf hk:NPC ;
+    owl:equivalentClass [
+        a owl:Restriction ;
+        owl:onProperty hk:vende ;
+        owl:someValuesFrom hk:Item
+    ] ;
+    rdfs:label "Vendedor" .
 
 hk:Regiao a owl:Class ; rdfs:subClassOf hk:Localidade ; rdfs:label "Região" .
 hk:SubRegiao a owl:Class ; rdfs:subClassOf hk:Localidade ; rdfs:label "Sub-região" .
