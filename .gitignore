@@ -1,2 +1,5 @@
+# Ignora o ambiente virtual
 /.venv
 
+# Ignora arquivo de visualização dos grafos
+*.html
