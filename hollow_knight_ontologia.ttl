@@ -72,8 +72,15 @@ hk:fazFronteiraCom a owl:ObjectProperty, owl:SymmetricProperty ;
     rdfs:range hk:Regiao ;
     rdfs:label "faz fronteira com" .
 
-hk:derrotadoPor a owl:ObjectProperty ;
+# Propriedade genérica (inversa de habitaEm)
+hk:temResidente a owl:ObjectProperty ;
     owl:inverseOf hk:habitaEm ;
+    rdfs:domain hk:Localidade ;
+    rdfs:range hk:Personagem ;
+    rdfs:label "tem residente" .
+
+# Propriedade específica para Chefões (independente, sem inverseOf)
+hk:temChefe a owl:ObjectProperty ;
     rdfs:domain hk:Localidade ;
     rdfs:range hk:Boss ;
     rdfs:label "tem chefe" .
